@@ -17,6 +17,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/jasny-bootstrap.min.css') }}" rel="stylesheet">
     <!-- <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet" type="text/css" /> -->
 
     <link href="{{ asset('css/dataTables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
@@ -57,7 +58,6 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        <li><a href="{{ url('all_topics') }}">All Topics</a></li>
                         <li><a href="{{ url('topic') }}">Topic</a></li>
                         <li><a href="{{ url('threads') }}">Threads</a></li>
                     </ul>

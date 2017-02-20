@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Topic\Topic;
 use App\Models\Thread\Thread;
+use App\Models\Comment\Comment;
 use Session;
 use Auth;
 
@@ -164,5 +165,18 @@ class ThreadController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function thread_detail(Thread $thread) {
+
+        if($thread) {
+
+            $comments = Comment::where('comment_id', 0)->where('thread_id', $thread->id)->orderBy('created_at', 'asc')->get();
+
+            return view('threads.detail', get_defined_vars());
+        } else {
+            Session::flash('error_msg', 'Thread not exist');
+            return redirect()->back();
+        }
     }
 }

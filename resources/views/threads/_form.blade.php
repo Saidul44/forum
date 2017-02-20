@@ -1,7 +1,7 @@
 <div class="form-group required">
       {!! Form::label('topic', 'Select Topic',['class'=>' col-lg-3 control-label']) !!}
     <div class="col-lg-8">
-        {!! Form::select('topic',$topics,null, ['id' => 'topic', 'class' =>'form-control ', 'required' => 'true', 'placeholder' => 'Select Topic']) !!}
+        {!! Form::select('topic',$topics,(isset($threadInfo) ? $threadInfo->topic_id : null ), ['id' => 'topic', 'class' =>'form-control ', 'required' => 'true', 'placeholder' => 'Select Topic']) !!}
          <span class="text-danger">{{$errors->first('topic')}}</span>
     </div>
 </div>
