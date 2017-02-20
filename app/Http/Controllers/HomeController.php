@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Thread\Thread;
+use App\Models\Topic\Topic;
 
 class HomeController extends Controller
 {
@@ -13,7 +15,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -23,6 +25,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $threads = Thread::all();
+        $topics = Topic::all();
+
+        return view('landing', get_defined_vars());
     }
 }

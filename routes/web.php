@@ -11,13 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-// Route::resource('/', 'TopicsController');
+Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
 Route::get('/all_topics', 'HomeController@index');
 Route::resource('topic', 'Topic\TopicController');

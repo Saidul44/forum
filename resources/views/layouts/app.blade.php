@@ -17,6 +17,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet" type="text/css" /> -->
 
     <link href="{{ asset('css/dataTables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
 
@@ -150,6 +151,7 @@
     <script src="{{ asset('js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
     {{--sweet alert--}}
     <script src="{{ asset('/js/sweetalert.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/js/jasny-bootstrap.min.js') }}" type="text/javascript"></script>
 
 </body>
 </html>
