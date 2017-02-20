@@ -8,10 +8,23 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ 'Forum' }}</title>
+
+    <!-- Font Awesome Icons -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <!-- Ionicons -->
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <link href="{{ asset('css/dataTables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
+
+    {{--sweet alert--}}
+    <link href="{{ asset('/css/sweetalert.css') }}" rel="stylesheet" type="text/css" />
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
 
     <!-- Scripts -->
     <script>
@@ -44,8 +57,8 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
                         <li><a href="{{ url('all_topics') }}">All Topics</a></li>
-                        <li><a href="{{ url('add_topic') }}">Add Topic</a></li>
-                        <li><a href="{{ url('threads') }}">Add Tread</a></li>
+                        <li><a href="{{ url('topic') }}">Topic</a></li>
+                        <li><a href="{{ url('threads') }}">Threads</a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -83,10 +96,60 @@
             </div>
         </nav>
 
-        @yield('content')
+        <div class="container">
+            <div class="col-md-12">
+                @if (Session::has('success_msg'))
+                    <?php $alert_class = 'alert-success';
+                    $msg = Session::pull('success_msg');
+                    ?>
+                @elseif(Session::has('error_msg'))
+                    <?php $alert_class = 'alert-danger';
+                    $msg = Session::pull('error_msg');
+                    ?>
+                @elseif(Session::has('info_msg'))
+                    <?php $alert_class = 'alert-info';
+                    $msg = Session::pull('info_msg');
+                    ?>
+                @elseif(Session::has('warning_msg'))
+                    <?php $alert_class = 'alert-warning';
+                    $msg = Session::pull('warning_msg');
+                    ?>
+                @endif
+                @if(Session::has('not_fade'))
+                    <div class="alert alert-success" id="not_fade"
+                         style="text-align: center; " role="alert">{!! Session::pull('not_fade') !!}
+                        <span onclick="remove_msg('not_fade')" class="pull-right fa fa-close"
+                              title="close"></span></div>
+                @elseif(isset($alert_class) && isset($msg))
+                    <div class="alert {{$alert_class}}" id="alert_msg" style="text-align: center; " role="alert">{{ $msg }}
+                        <span onclick="remove_msg('alert_msg')" class="pull-right fa fa-close"
+                              title="close"></span></div>
+                @endif
+            </div>
+            @yield('content')
+        </div>
+
     </div>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        $(function() {
+            $('.dataTable').dataTable();
+
+            $("#alert_msg").fadeOut(8000);
+
+        });
+
+        function remove_msg(data) {
+            document.getElementById(data).style.display = 'none';
+        }
+        
+    </script>
+
+    <!-- dataTables JS -->
+    <script src="{{ asset('js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
+    {{--sweet alert--}}
+    <script src="{{ asset('/js/sweetalert.min.js') }}" type="text/javascript"></script>
+
 </body>
 </html>

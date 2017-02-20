@@ -21,7 +21,11 @@
         ],
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "app/Helper/button.php",
+            "app/Helper/common.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

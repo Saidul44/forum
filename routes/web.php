@@ -17,8 +17,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::resource('/', 'TopicsController');
-// Route::get('/home', 'HomeController@index');
+// Route::resource('/', 'TopicsController');
+Route::get('/home', 'HomeController@index');
 Route::get('/all_topics', 'HomeController@index');
-Route::get('/add_topic', 'HomeController@index');
-Route::get('threads', 'ThreadsController@index');
+Route::resource('topic', 'Topic\TopicController');
+Route::resource('threads', 'Thread\ThreadController');

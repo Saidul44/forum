@@ -12,7 +12,7 @@
 
                         <div class="form-group required">
                               {!! Form::label('title', null,['class'=>' col-lg-3 control-label']) !!}
-                            <div class="col-lg-5">
+                            <div class="col-lg-8">
                                 {!! Form::text('title',null, ['id' => 'title', 'class' =>'form-control ', 'maxlength' => '250', 'required' => 'true']) !!}
                                  <span class="text-danger">{{$errors->first('title')}}</span>
                             </div>
@@ -20,22 +20,22 @@
 
                         <div class="form-group required">
                               {!! Form::label('body', null,['class'=>' col-lg-3 control-label']) !!}
-                            <div class="col-lg-5">
-                                {!! Form::textarea('body',null, ['id' => 'body', 'class' =>'form-control ', 'maxlength' => '250', 'required' => 'true']) !!}
+                            <div class="col-lg-8">
+                                {!! Form::textarea('body',null, ['id' => 'body', 'class' =>'form-control ', 'maxlength' => '250', 'required' => 'true', 'rows' => 5]) !!}
                                  <span class="text-danger">{{$errors->first('body')}}</span>
                             </div>
                         </div>
 
                         <div class="form-group required">
                               {!! Form::label('image', null,['class'=>' col-lg-3 control-label']) !!}
-                            <div class="col-lg-5">
+                            <div class="col-lg-8">
                                 {!! Form::file('image',['id' => 'image', 'class' =>'form-control ', 'required' => 'true']) !!}
                                  <span class="text-danger">{{$errors->first('image')}}</span>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-lg-5 col-lg-offset-3">
+                            <div class="col-lg-8 col-lg-offset-3">
                                 {!! Form::submit('Submit',['class' => 'btn btn-sm btn-primary pull-right'])!!}
                             </div>
                         </div>
