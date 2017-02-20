@@ -8,7 +8,7 @@
 		return 'Not Exist';
 	}
 
-	function get_reply($comment_id, $thread_id) {
-		return \App\Models\Comment\Comment::where('thread_id', $thread_id)->where('comment_id', $comment_id)->get();
+	function count_reply($comment_id, $thread_id) {
+		return \App\Models\Comment\Comment::where('thread_id', $thread_id)->where('comment_id', $comment_id)->count();
 	}
 ?>

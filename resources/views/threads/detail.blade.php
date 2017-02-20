@@ -172,7 +172,7 @@ input[type="file"]{
                                         <ul class="media-list">
 
                                         @foreach($comments as $comment_key => $comment)
-                                          <?php $reply_comments = get_reply($comment->id, $comment->thread_id); ?>
+                                          <?php $count_reply_comment = count_reply($comment->id, $comment->thread_id); ?>
                                           <li class="media">
                                             <a class="pull-left" href="#">
                                               <img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">
@@ -187,12 +187,12 @@ input[type="file"]{
                                                     {{ $comment->comment }}
                                                   </p>
                                                   &nbsp; <a href="#" id="reply" class="text-muted"><span class="fa fa-share"></span> Reply</a>
-                                                  @if(count($reply_comments) > 0)
-                                                    &nbsp; &nbsp;<a onclick="load_reply('{{ $comment->id }}','{{ $comment->thread_id }}')" class="text-muted" href=""><span class="fa fa-comments-o"></span> {{ count($reply_comments) }} comments</a>
+                                                  @if( $count_reply_comment > 0)
+                                                    &nbsp; &nbsp;<a onclick="load_reply(event, '{{ $comment->id }}','{{ $comment->thread_id }}')" class="text-muted" href="#"><span class="fa fa-comments-o"></span> {{ $count_reply_comment }} comments</a>
                                                   @endif
                                               </div>              
                                             </div>
-                                            @if(count($reply_comments) > 0)
+                                            @if($count_reply_comment > 0)
                                             <div class="collapse" id="reply_{{ $comment->id }}">
                                             
                                             </div>
@@ -211,71 +211,91 @@ input[type="file"]{
 </div>
 
 <script>
-    function load_reply(comment_id, thread_id) {
+    function load_reply(e, comment_id, thread_id) {
+      e.preventDefault();
+      console.log('mmmmm');
       
-      if(comment_id > 0 && thread_id > 0) {
-            
-            $.ajax({
-                url: "{{ url('load_reply') }}",
-                method: 'post',
-                dataType: 'json',
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    comment_id: comment_id,
-                    thread_id: thread_id
-                },
-                success: function (response) {
+      if($('#reply_'+comment_id).hasClass('in')) {
+        console.log('TTT');
+        $('#reply_'+comment_id).collapse('hide');
+        $('#reply_'+comment_id).html('');
+      
+      } else {
+        console.log(comment_id);
+        console.log(thread_id);
+        if(comment_id > 0 && thread_id > 0) {
+              console.log('eee');
 
-                  if(! response.error) {
-                    // console.log(response.data.length);
-                    if(response.data.length > 0) {
-                      var reply_comment_text = '<ul class="media-list">';
-                          // $.each(response.data, function (key, reply_comment) {
-                          for(var i = 0; i < response.data.length; i++) {
-                            console.log('aa');
-                          reply_comment_text += '<li class="media media-replied">'+
-                              '<a class="pull-left" href="#">'+
-                                '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
-                              '</a>'+
-                              '<div class="media-body">'+
-                                '<div class="well well-lg">'+
-                                    '<h4 class="media-heading reviews"><span class="fa fa-share"></span> '+response.data[i].user_id +' </h4>'+
-                                    '<ul class="media-date text-uppercase reviews list-inline">'+
-                                      '<li class="dd">' + response.data[i].updated_at + '</li>'+
-                                    '</ul>'+
-                                    '<p class="media-comment">'+ response.data[i].comment +'</p>'+
-                                    '&nbsp; <a href="#" id="reply" class="text-muted"><span class="fa fa-share"></span> Reply</a>'+
-                        '&nbsp; &nbsp;<a data-toggle="collapse" class="text-muted" href="#replyOne"><span class="fa fa-comments-o"></span> 2 comments</a>'+
-                                '</div>'+              
-                              '</div>'+
-                          '</li>';
-                        }
+              $.ajax({
+                  url: "{{ url('load_reply') }}",
+                  method: 'post',
+                  dataType: 'json',
+                  data: {
+                      _token: "{{ csrf_token() }}",
+                      comment_id: comment_id,
+                      thread_id: thread_id
+                  },
+                  success: function (response) {
+
+                    if(! response.error) {
+                      if(response.data.length > 0) {
+                        var reply_comment_text = '<ul class="media-list">';
+                            for(var i = 0; i < response.data.length; i++) {
+                              console.log('aa');
+                            reply_comment_text += '<li class="media media-replied">'+
+                                '<a class="pull-left" href="#">'+
+                                  '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
+                                '</a>'+
+                                '<div class="media-body">'+
+                                  '<div class="well well-lg">'+
+                                      '<h4 class="media-heading reviews"><span class="fa fa-share"></span> '+response.data[i].user_info.name +' </h4>'+
+                                      '<ul class="media-date text-uppercase reviews list-inline">'+
+                                        '<li class="dd">' + response.data[i].updated_at + '</li>'+
+                                      '</ul>'+
+                                      '<p class="media-comment">'+ response.data[i].comment +'</p>'+
+                                      '&nbsp; <a href="#" id="reply" class="text-muted"><span class="fa fa-share"></span> Reply</a>';
+                                      if(response.data[i].count_reply_comment > 0) {
+                                        reply_comment_text += '&nbsp; &nbsp;<a onclick="load_reply(event,'+ response.data[i].id+ ',' + response.data[i].thread_id +')" class="text-muted" href=""><span class="fa fa-comments-o"></span> '+ response.data[i].count_reply_comment +' comments</a>';
+                                      }
+                                  reply_comment_text += '</div>'+              
+                                '</div>';
+                                if(response.data[i].count_reply_comment > 0) {
+                                  console.log('$$$$$$$');
+                                  reply_comment_text += '<div class="collapse in" id="reply_'+ response.data[i].id +'>aaa</div>';
+                                }
+                            reply_comment_text += '</li>';
+
+                            console.log(reply_comment_text);
+                            
+                            $('#reply_'+comment_id).append(reply_comment_text);
+                            
+                            reply_comment_text = '';
+                          }
+                          
                           reply_comment_text += '</ul>';
-                          console.log(reply_comment_text);
+                          
 
                           $('#reply_'+comment_id).append(reply_comment_text);
                           $('#reply_'+comment_id).collapse('show');
 
-                      // $(comment_insert_text).hide().prependTo('.media-list').slideDown("slow");
+                      }
 
-                      // $('#comment_text').val('');
                     }
-
+                  },
+                  error: function (data) {
+                    swal({
+                          title: "Warning",
+                          text: 'Something not right',
+                          type: "warning",
+                          confirmButtonText: "OK",
+                      },
+                      function (isConfirm) {
+                          location.reload();
+                      });
                   }
-                },
-                error: function (data) {
-                  swal({
-                        title: "Warning",
-                        text: 'Something not right',
-                        type: "warning",
-                        confirmButtonText: "OK",
-                    },
-                    function (isConfirm) {
-                        location.reload();
-                    });
-                }
-            });
-        }
+              });
+          }
+      }
     }
 
 

@@ -7,8 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment\Comment;
 use App\Models\Thread\Thread;
 use App\Models\Topic\Topic;
+use App\User;
 use Auth;
-use User;
+use Log;
 
 class CommentController extends Controller
 {
@@ -108,6 +109,12 @@ class CommentController extends Controller
         
         $reply_comments = Comment::where('thread_id', $request->thread_id)->where('comment_id', $request->comment_id)->get();
 
+        foreach ($reply_comments as $reply_comment) {
+            $reply_comment->count_reply_comment = count_reply($reply_comment->id, $reply_comment->thread_id);
+            $reply_comment->user_info = User::find($reply_comment->user_id);
+        }
+
+        Log::error($reply_comments);
         return response()->json(['error' => false, 'data' => $reply_comments]);
     }
 }
