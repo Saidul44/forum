@@ -10,4 +10,8 @@ class Thread extends Model
 
     protected $fillable = ["user_id","topic_id", 'title', 'body', 'photo'];
 
+  	public static function count_topics($topic_id)
+    {
+    	return Self::where('topic_id', $topic_id)->count();
+    }
 }
