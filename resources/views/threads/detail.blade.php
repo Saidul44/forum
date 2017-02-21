@@ -208,7 +208,7 @@ input[type="file"]{
                                       <?php $count_reply_comment = count_reply($comment->id, $comment->thread_id); ?>
                                       <li class="media" id="comment_li_{{ $comment->id }}">
                                         <a class="pull-left" href="#">
-                                          <img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">
+                                          <img class="media-object img-circle" src="{{ asset('img/user-photo4.png') }}" alt="profile">
                                         </a>
                                         <div class="media-body" id="comment_body_{{ $comment->id }}">
                                           <div class="well well-lg">
@@ -256,6 +256,7 @@ input[type="file"]{
 </div>
 
 <script>
+    var user_img = '{{ asset("img/user-photo4.png") }}';
     var login_url = "{{ url('login') }}";
     var auth_id = '{{ Auth::id() }}';
 
@@ -454,7 +455,7 @@ input[type="file"]{
               // var reply_comment_text = '<ul class="media-list" id="ul_reply_'+ comment_id +'">'+
                     var reply_comment_text = '<li class="media media-replied" id="comment_li_'+ response.data.id +'">'+
                         '<a class="pull-left" href="#">'+
-                          '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
+                          '<img class="media-object img-circle" src="'+ user_img +'" alt="profile">'+
                         '</a>'+
                         '<div class="media-body" id="comment_body_'+ response.data.id +'">'+
                           '<div class="well well-lg">'+
@@ -549,7 +550,7 @@ input[type="file"]{
 
                             reply_comment_text += '<li class="media media-replied" id="comment_li_'+ response.data[i].id +'">'+
                                 '<a class="pull-left" href="#">'+
-                                  '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
+                                  '<img class="media-object img-circle" src="'+ user_img +'" alt="profile">'+
                                 '</a>'+
                                 '<div class="media-body" id="comment_body_'+ response.data[i].id +'">'+
                                   '<div class="well well-lg">'+
@@ -631,7 +632,7 @@ input[type="file"]{
                   if(! response.error) {
                     var comment_insert_text = '<li class="media" id="comment_li_'+ response.data.id +'">'+
                       '<a class="pull-left" href="#">'+
-                        '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">'+
+                        '<img class="media-object img-circle" src="'+ user_img +'" alt="profile">'+
                       '</a>'+
                       '<div class="media-body" id="comment_body_'+ response.data.id +'">'+
                         '<div class="well well-lg">'+

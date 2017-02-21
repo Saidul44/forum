@@ -68,8 +68,10 @@ a:hover{
                         <li class="list-group-item active">Topics</li>
                            @foreach($topics as $topic)
                                    <li class="list-group-item">
-                                        <span class="badge">{{ \App\Models\Thread\Thread::count_topics($topic->id) }}</span>
+                                        <a href="{{ url('topic/'.$topic->id) }}">
                                         {{ $topic->name }}
+                                        <span class="pull-right badge">{{ \App\Models\Thread\Thread::count_topics($topic->id) }}</span>
+                                        </a>
                                     </li>
                            @endforeach
                 </ul>

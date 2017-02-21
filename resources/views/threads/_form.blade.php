@@ -4,6 +4,9 @@
         {!! Form::select('topic',$topics,(isset($threadInfo) ? $threadInfo->topic_id : null ), ['id' => 'topic', 'class' =>'form-control ', 'required' => 'true', 'placeholder' => 'Select Topic']) !!}
          <span class="text-danger">{{$errors->first('topic')}}</span>
     </div>
+    <div>
+      <a class="btn btn-primary" href="{{ url('topic') }}"><i class="fa fa-plus"></i></a>
+    </div>
 </div>
 
 <div class="form-group required">
