@@ -65,6 +65,9 @@ class TopicController extends Controller
     {
         $threads = Thread::where('topic_id', $topic->id)->get();
         $topics = Topic::all();
+
+        $title = $topic->name;
+
         return view('landing', get_defined_vars());
     }
 
