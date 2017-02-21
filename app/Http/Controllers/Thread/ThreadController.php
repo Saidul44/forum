@@ -171,7 +171,7 @@ class ThreadController extends Controller
 
         if($thread) {
 
-            $comments = Comment::where('comment_id', 0)->where('thread_id', $thread->id)->orderBy('created_at', 'asc')->get();
+            $comments = Comment::where('comment_id', 0)->where('thread_id', $thread->id)->orderBy('created_at', 'desc')->get();
 
             return view('threads.detail', get_defined_vars());
         } else {

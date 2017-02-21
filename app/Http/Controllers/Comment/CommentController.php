@@ -114,7 +114,23 @@ class CommentController extends Controller
             $reply_comment->user_info = User::find($reply_comment->user_id);
         }
 
-        Log::error($reply_comments);
         return response()->json(['error' => false, 'data' => $reply_comments]);
+    }
+
+    public function reply_store(Request $request) {
+        $this->validate($request, [
+                'comment' => 'required',
+                'thread_id' => 'required',
+                'comment_id' => 'required',
+            ]);
+
+        $request['user_id'] = Auth::id();
+
+        $reply_comment = Comment::create($request->all());
+
+        $reply_comment->count_reply_comment = count_reply($reply_comment->id, $reply_comment->thread_id);
+        $reply_comment->user_info = User::find($reply_comment->user_id);
+
+        return response()->json(['error' => false, 'data' => $reply_comment]);
     }
 }

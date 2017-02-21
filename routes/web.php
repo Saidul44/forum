@@ -19,5 +19,6 @@ Route::get('/all_topics', 'HomeController@index');
 Route::resource('topic', 'Topic\TopicController');
 Route::get('thread-detail/{thread}', 'Thread\ThreadController@thread_detail');
 Route::resource('threads', 'Thread\ThreadController');
+Route::post('reply_store', 'Comment\CommentController@reply_store');
 Route::post('load_reply', 'Comment\CommentController@load_reply');
 Route::resource('comment', 'Comment\CommentController');
