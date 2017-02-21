@@ -47,7 +47,7 @@ class HomeController extends Controller
                         ->orWhere('name', 'like', '%' . $search . '%')
                         ->get();
 
-        $title = 'Searched Threads';
+        $title = 'Searched Results';
 
         $topics = Topic::all(); 
 
