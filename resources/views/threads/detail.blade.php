@@ -136,78 +136,77 @@ input[type="file"]{
                         <div class="icon">
                             <a href="{{ url('') }}"><i class="fa fa-user" aria-hidden="true">
                                     {{ user_info($thread->user_id, 'name') }}
-                                </i></a> &nbsp; <a href="#"><i class="fa fa-clock-o" aria-hidden="true">{{ $thread->updated_at }}</i></a> &nbsp; <a href="{{ url('thread-detail/'.$thread->id) }}"><i class="fa fa-comments-o" aria-hidden="true">
-                                    Comments</i></a>
+                                </i></a> &nbsp; <a href="#"><i class="fa fa-clock-o" aria-hidden="true">{{ $thread->updated_at }}</i></a> &nbsp; <a data-toggle="collapse" href="#comments_div"><i class="fa fa-comments-o" aria-hidden="true"> {{ (count($comments) > 0) ? count($comments) : '' }} Comments</i></a>
                         </div>
                     </div>
 
-                        <div class="col-sm-12" id="logout">
-                            <div class="page-header">
-                                <div class="logout">
-                                    <button class="btn btn-default btn-circle text-uppercase" type="button" onclick="$('#logout').hide(); $('#login').show()">
-                                        <span class="fa fa-power-off"></span> Logout                    
-                                    </button>                
-                                </div>
+                    <div class="col-sm-12 collapse" id="comments_div">
+                        <div class="page-header">
+                            <div class="logout">
+                                <button class="btn btn-default btn-circle text-uppercase" type="button" onclick="$('#logout').hide(); $('#login').show()">
+                                    <span class="fa fa-power-off"></span> Logout                    
+                                </button>                
                             </div>
-                            <div class="comment-tabs">
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li class="active"><a class="nav-li" href="#comments-logout" role="tab" data-toggle="tab"><h4 class="reviews text-capitalize">Comments</h4></a></li>
-                                    <!-- <li><a href="#add-comment" role="tab" data-toggle="tab"><h4 class="reviews text-capitalize">Add comment</h4></a></li> -->
-                                </ul>            
-                                <div class="tab-content tab-content-custom">
-                                    <div class="tab-pane active" id="comments-logout">                
-                                        <div class="row" style="margin-bottom: 25px;">
-                                            <div class="col-sm-11 col-sm-offset-1">
-                                                <form class="">
-                                                  <div class="form-group">
-                                                    <div class="input-group">
-                                                      <input type="text" class="form-control" id="comment_text" placeholder="Write a comment">
-                                                      <div class="btn-primary input-group-addon" style="cursor: pointer" onclick="comment_submit('{{ $thread->id }}')">Submit</div>
-                                                    </div>
-                                                  </div>
-                                                </form>
-                                            </div>
+                        </div>
+                        <div class="comment-tabs">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="active"><a class="nav-li" href="#comments-logout" role="tab" data-toggle="tab"><h4 class="reviews text-capitalize">Comments</h4></a></li>
+                                <!-- <li><a href="#add-comment" role="tab" data-toggle="tab"><h4 class="reviews text-capitalize">Add comment</h4></a></li> -->
+                            </ul>            
+                            <div class="tab-content tab-content-custom">
+                                <div class="tab-pane active" id="comments-logout">                
+                                    <div class="row" style="margin-bottom: 25px;">
+                                        <div class="col-sm-11 col-sm-offset-1">
+                                            <form class="">
+                                              <div class="form-group">
+                                                <div class="input-group">
+                                                  <input type="text" class="form-control" id="comment_text" placeholder="Write a comment">
+                                                  <div class="btn-primary input-group-addon" style="cursor: pointer" onclick="comment_submit('{{ $thread->id }}')">Submit</div>
+                                                </div>
+                                              </div>
+                                            </form>
                                         </div>
-
-                                        <ul class="media-list">
-
-                                        @foreach($comments as $comment_key => $comment)
-                                          <?php $count_reply_comment = count_reply($comment->id, $comment->thread_id); ?>
-                                          <li class="media">
-                                            <a class="pull-left" href="#">
-                                              <img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">
-                                            </a>
-                                            <div class="media-body">
-                                              <div class="well well-lg">
-                                                  <h4 class="media-heading reviews">{{ user_info($comment->user_id, 'name') }} </h4>
-                                                  <ul class="media-date text-uppercase reviews list-inline">
-                                                    <li class="dd">{{ $comment->updated_at }}</li>
-                                                  </ul>
-                                                  <p class="media-comment">
-                                                    {{ $comment->comment }}
-                                                  </p>
-                                                  &nbsp; <a href="#" id="reply" onclick="comment_reply(event, '{{ $comment->id }}',  '{{ $comment->thread_id }}')" class="text-muted"><span class="fa fa-share"></span> Reply</a>
-                                                  @if( $count_reply_comment > 0)
-                                                    &nbsp; &nbsp;<a onclick="load_reply(event, '{{ $comment->id }}','{{ $comment->thread_id }}')" class="text-muted" href="#"><span class="fa fa-comments-o"></span> {{ $count_reply_comment }} comments</a>
-                                                  @endif
-                                              </div>              
-                                            </div>
-                                            @if($count_reply_comment > 0)
-                                            <div class="collapse" id="reply_{{ $comment->id }}">
-                                            
-                                            </div>
-                                            @endif
-                                            <div class="collapse" id="comment_reply_{{ $comment->id }}">
-
-                                            </div>
-                                          </li>
-                                        @endforeach
-                                        </ul> 
                                     </div>
+
+                                    <ul class="media-list">
+
+                                    @foreach($comments as $comment_key => $comment)
+                                      <?php $count_reply_comment = count_reply($comment->id, $comment->thread_id); ?>
+                                      <li class="media">
+                                        <a class="pull-left" href="#">
+                                          <img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">
+                                        </a>
+                                        <div class="media-body">
+                                          <div class="well well-lg">
+                                              <h4 class="media-heading reviews">{{ user_info($comment->user_id, 'name') }} </h4>
+                                              <ul class="media-date text-uppercase reviews list-inline">
+                                                <li class="dd">{{ $comment->updated_at }}</li>
+                                              </ul>
+                                              <p class="media-comment">
+                                                {{ $comment->comment }}
+                                              </p>
+                                              &nbsp; <a href="#" id="reply" onclick="comment_reply(event, '{{ $comment->id }}',  '{{ $comment->thread_id }}')" class="text-muted"><span class="fa fa-share"></span> Reply</a>
+                                              @if( $count_reply_comment > 0)
+                                                &nbsp; &nbsp;<a onclick="load_reply(event, '{{ $comment->id }}','{{ $comment->thread_id }}')" class="text-muted" href="#"><span class="fa fa-comments-o"></span> {{ $count_reply_comment }} comments</a>
+                                              @endif
+                                          </div>              
+                                        </div>
+                                        @if($count_reply_comment > 0)
+                                        <div class="collapse" id="reply_{{ $comment->id }}">
+                                        
+                                        </div>
+                                        @endif
+                                        <div class="collapse" id="comment_reply_{{ $comment->id }}">
+
+                                        </div>
+                                      </li>
+                                    @endforeach
+                                    </ul> 
                                 </div>
                             </div>
                         </div>
-                      </div>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>
@@ -217,6 +216,11 @@ input[type="file"]{
     
     function comment_reply(e, comment_id, thread_id) {
       e.preventDefault();
+      
+      if($('#comment_reply_'+comment_id).hasClass('in')) {
+        return;
+      }
+
       var comment_reply_input = '<form class="">'+
         '<div class="form-group">'+
           '<div class="input-group">'+
@@ -226,6 +230,12 @@ input[type="file"]{
         '</div>'+
       '</form>';
 
+      if($('#reply_'+comment_id).length) {
+        if(! $('#reply_'+comment_id).hasClass('in')) {
+          load_reply(e, comment_id, thread_id);
+        }
+      }
+      
       $('#comment_reply_'+comment_id).append(comment_reply_input);
       
       $('#comment_reply_'+comment_id).collapse('show');
@@ -233,10 +243,8 @@ input[type="file"]{
 
     function reply_submit(comment_id, thread_id) {
       var comment_text = $('#comment_text_'+comment_id).val();
-        console.log('**********');
       
       if(comment_text) {
-        console.log('7777777777');
 
         $.ajax({
           url: "{{ url('reply_store') }}",
@@ -251,8 +259,8 @@ input[type="file"]{
           success: function (response) {
 
             if(! response.error) {
-              var reply_comment_text = '<ul class="media-list">'+
-                    '<li class="media media-replied">'+
+              // var reply_comment_text = '<ul class="media-list" id="ul_reply_'+ comment_id +'">'+
+                    var reply_comment_text = '<li class="media media-replied">'+
                         '<a class="pull-left" href="#">'+
                           '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
                         '</a>'+
@@ -274,17 +282,26 @@ input[type="file"]{
                         }
                     reply_comment_text += '<div class="" id="comment_reply_'+ response.data.id +'"></div>'+
 
-                      '</li>'+
-                    '</ul>';
+                      '</li>';
+                    // '</ul>';
 
                     console.log(reply_comment_text);
-                    $('#comment_reply_'+comment_id).prop('id', 'reply_'+comment_id);
-                    
-                    $('#reply_'+comment_id).html('');
-                    $('#reply_'+comment_id).append(reply_comment_text);
-                    $('#reply_'+comment_id).collapse('show');
+                    if($('#reply_'+comment_id).length) {
+                      $('#ul_reply_'+comment_id).append(reply_comment_text);
+                      $('#comment_text_'+comment_id).val('');
+                      $('#comment_reply_'+comment_id).removeClass('in');
+                      $('#comment_reply_'+comment_id).html('');
 
-                    $('#comment_text_'+comment_id).val('');
+                    } else {
+                      reply_comment_text = '<ul class="media-list" id="ul_reply_'+ response.data.id +'">'+reply_comment_text+'</ul>';
+                      $('#comment_reply_'+comment_id).prop('id', 'reply_'+comment_id);
+                    
+                      $('#reply_'+comment_id).html('');
+                      $('#reply_'+comment_id).append(reply_comment_text);
+                      $('#reply_'+comment_id).collapse('show');
+                    }
+
+                    // $('#comment_text_'+comment_id).val('');
               
             }
           },
@@ -327,7 +344,7 @@ input[type="file"]{
 
                     if(! response.error) {
                       if(response.data.length > 0) {
-                        var reply_comment_text = '<ul class="media-list">';
+                        var reply_comment_text = '<ul class="media-list" id="ul_reply_'+ comment_id +'">';
                             for(var i = 0; i < response.data.length; i++) {
 
                             reply_comment_text += '<li class="media media-replied">'+
@@ -356,9 +373,9 @@ input[type="file"]{
 
                             console.log(reply_comment_text);
                             
-                            $('#reply_'+comment_id).append(reply_comment_text);
+                            // $('#reply_'+comment_id).append(reply_comment_text);
                             
-                            reply_comment_text = '';
+                            // reply_comment_text = '';
                           }
                           
                           reply_comment_text += '</ul>';
@@ -416,9 +433,10 @@ input[type="file"]{
                               '<li class="dd">'+ response.data.updated_at +'</li>'+
                             '</ul>'+
                             '<p class="media-comment">' + response.data.comment + '</p>'+
-                            '&nbsp; <a href="#" id="reply" class="text-muted"><span class="fa fa-share"></span> Reply</a>'+
+                            '&nbsp; <a href="#" id="reply" onclick="comment_reply(event, '+ response.data.id +','+ response.data.thread_id +')" class="text-muted"><span class="fa fa-share"></span> Reply</a>'+
                         '</div>'+      
                       '</div>'+
+                      '<div id="comment_reply_'+ response.data.id +'"></div>'+
                     '</li>';
 
                     $(comment_insert_text).hide().prependTo('.media-list').slideDown("slow");
