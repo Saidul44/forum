@@ -284,9 +284,9 @@ input[type="file"]{
           success: function (response) {
 
             if(! response.error) {
-
+              alert('a');
             } else {
-
+              alert('eeeee');
             }
 
           },

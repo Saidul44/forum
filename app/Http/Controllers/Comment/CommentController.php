@@ -99,7 +99,10 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         if($comment) {
-            return response()->json(['error' => false, 'data']);
+            Comment::where('comment_id', $comment->id)->delete();
+            $comment->delete();
+
+            return response()->json(['error' => false]);
         } else {
             return response()->json(['error' => true, 'msg' => 'Comment not exists.']);
         }
