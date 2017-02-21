@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Topic;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Topic\Topic;
+use App\Models\Thread\Thread;
 use Session;
 
 class TopicController extends Controller
 {
 
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => 'show']);
     }
 
     /**
@@ -60,9 +61,11 @@ class TopicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Topic $topic)
     {
-        //
+        $threads = Thread::where('topic_id', $topic->id)->get();
+        $topics = Topic::all();
+        return view('landing', get_defined_vars());
     }
 
     /**
