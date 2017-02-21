@@ -53,9 +53,9 @@ class InstallController extends Controller
             'host'                      => 'required',
             'database_name'             => 'required',
             'username'                  => 'required',
-            'password'                  => 'required',
+            // 'password'                  => 'required',
             ]);
-        
+
         // check extension and folder problem if has error show errorm message
         if ($this->checkResults['extensions_problem']) { // check extensions_problem
             Session::flash('extensions_error', 'Please fix error.');
@@ -68,7 +68,11 @@ class InstallController extends Controller
         $host = $request->host;
         $database_name = $request->database_name;
         $username = $request->username;
-        $password = $request->password;
+        $password = '';
+        
+        if($request->has('password')) {
+            $password = $request->password;
+        }
 
         $db = 'mysql:host=' . $host . ';dbname=' . $database_name;
 
