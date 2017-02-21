@@ -22,6 +22,14 @@ a:hover{
     padding: 25px 15px !important;
 }
 
+.focusedInput {
+    border-color: rgba(82,168,236,.8);
+    outline: 0;
+    outline: thin dotted \9;
+    -moz-box-shadow: 0 0 8px rgba(82,168,236,.6);
+    box-shadow: 0 0 8px rgba(82,168,236,.6) !important;
+}
+
 .well {
     padding: 0px !important;
 }
@@ -148,7 +156,7 @@ input[type="file"]{
                         <div class="icon">
                             <a href="{{ url('') }}"><i class="fa fa-user" aria-hidden="true">
                                     {{ user_info($thread->user_id, 'name') }}
-                                </i></a> &nbsp; <a href="#"><i class="fa fa-clock-o" aria-hidden="true">{{ $thread->updated_at }}</i></a> &nbsp; <a data-toggle="collapse" href="#comments_div"><i class="fa fa-comments-o" aria-hidden="true"> {{ (count($comments) > 0) ? count($comments) : '' }} Comments</i></a>
+                                </i></a> &nbsp; <a href="#"><i class="fa fa-clock-o" aria-hidden="true"> {{ $thread->updated_at }}</i></a> &nbsp; <a data-toggle="collapse" href="#comments_div"><i class="fa fa-comments-o" aria-hidden="true"> {{ (count($comments) > 0) ? count($comments) : '' }} Comments</i></a>
                         </div>
                     </div>
 
@@ -162,7 +170,6 @@ input[type="file"]{
                                             <span class="fa fa-power-off"></span> Logout
                                         </a>
                                   
-
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}
                                         </form>               
@@ -203,13 +210,13 @@ input[type="file"]{
                                         <a class="pull-left" href="#">
                                           <img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">
                                         </a>
-                                        <div class="media-body">
+                                        <div class="media-body" id="comment_body_{{ $comment->id }}">
                                           <div class="well well-lg">
                                               <h4 class="media-heading reviews">{{ user_info($comment->user_id, 'name') }} </h4>
                                               <ul class="media-date text-uppercase reviews list-inline">
-                                                <li class="dd">{{ $comment->updated_at }}</li>
+                                                <li class="dd" id="comment_date_{{ $comment->id }}">{{ $comment->updated_at }}</li>
                                               </ul>
-                                              <p class="media-comment">
+                                              <p class="media-comment" id="comment_content_{{ $comment->id }}">
                                                 {{ $comment->comment }}
                                               </p>
                                               &nbsp; <a href="#" id="reply" onclick="comment_reply(event, '{{ $comment->id }}',  '{{ $comment->thread_id }}')" class="text-muted"><span class="fa fa-share"></span> Reply</a>
@@ -217,11 +224,16 @@ input[type="file"]{
                                                 &nbsp; &nbsp;<a onclick="load_reply(event, '{{ $comment->id }}','{{ $comment->thread_id }}')" class="text-muted" href="#"><span class="fa fa-comments-o"></span> {{ $count_reply_comment }} comments</a>
                                               @endif
                                               @if(Auth::check() && (Auth::id() == $comment->user_id))
-                                                &nbsp;&nbsp;<a href="#" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>
+                                                &nbsp;&nbsp;<a href="#" onclick="edit_comment(event, '{{ $comment->id }}')" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>
                                                 &nbsp;&nbsp;<a href="#" onclick="delete_comment(event, '{{ $comment->id }}')" class="text-muted"><i class="fa fa-trash"></i> Delete</a>
                                               @endif
                                           </div>              
                                         </div>
+                                        
+                                        <div class="collapse" id="edit_comment_{{ $comment->id }}">
+
+                                        </div>
+
                                         @if($count_reply_comment > 0)
                                         <div class="collapse" id="reply_{{ $comment->id }}">
                                         
@@ -270,6 +282,84 @@ input[type="file"]{
         });
       }
     });
+
+    function edit_comment(e, comment_id) {
+      e.preventDefault();
+
+      if($('#edit_comment_'+comment_id).hasClass('in')) {
+        return;
+      }
+
+      var comment_content = $('#comment_content_'+comment_id).text();
+
+      var comment_reply_input = '<form class="">'+
+        '<div class="form-group">'+
+          '<div class="input-group">'+
+            '<input type="text" value="' + $.trim(comment_content) + '" class="form-control input_key focusedInput" id="edit_comment_content_'+ comment_id +'" placeholder="Write a comment">'+
+            '<div class="btn-primary input-group-addon" style="color: #fff; cursor: pointer; background-color: #2579a9;" onclick="edit_comment_submit('+ comment_id +')">Update</div>'+
+          '</div>'+
+        '</div>'+
+      '</form>';
+
+      $('#edit_comment_'+comment_id).append(comment_reply_input);
+      
+      $('#comment_body_'+comment_id).hide();
+
+      $('#edit_comment_'+comment_id).collapse('show');
+    }
+
+    function edit_comment_submit(comment_id) {
+      var comment_text = $('#edit_comment_content_'+comment_id).val();
+      
+      if(comment_text) {
+        var url = "{{ url('comment') }}";
+
+        $.ajax({
+          url: url + '/' + comment_id,
+          method: 'post',
+          dataType: 'json',
+          data: {
+              _method: 'PUT',
+              _token: "{{ csrf_token() }}",
+              comment: comment_text,
+          },
+          success: function (response) {
+
+            if(! response.error) {
+              $('#comment_content_'+comment_id).text(response.data.comment);
+              $('#comment_date_'+comment_id).text(response.data.updated_at);
+
+              $('#edit_comment_'+comment_id).collapse('hide');
+
+              $('#comment_body_'+comment_id).show();
+            } else {
+              swal({
+                  title: "Warning",
+                  text: response.msg,
+                  type: "warning",
+                  confirmButtonText: "OK",
+              },
+              function (isConfirm) {
+                  // location.reload();
+              });
+            }
+
+
+          },
+          error: function (data) {
+            swal({
+                  title: "Warning",
+                  text: 'Something not right',
+                  type: "warning",
+                  confirmButtonText: "OK",
+              },
+              function (isConfirm) {
+                  location.reload();
+              });
+          }
+      });
+      }
+    }
 
     function delete_comment(e, comment_id) {
       e.preventDefault();
@@ -366,24 +456,26 @@ input[type="file"]{
                         '<a class="pull-left" href="#">'+
                           '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
                         '</a>'+
-                        '<div class="media-body">'+
+                        '<div class="media-body" id="comment_body_'+ response.data.id +'">'+
                           '<div class="well well-lg">'+
                               '<h4 class="media-heading reviews"><span class="fa fa-share"></span> '+response.data.user_info.name +' </h4>'+
                               '<ul class="media-date text-uppercase reviews list-inline">'+
-                                '<li class="dd">' + response.data.updated_at + '</li>'+
+                                '<li class="dd" id="comment_date_'+ response.data.id +'">' + response.data.updated_at + '</li>'+
                               '</ul>'+
-                              '<p class="media-comment">'+ response.data.comment +'</p>'+
+                              '<p class="media-comment" id="comment_content_'+ response.data.id +'">'+ response.data.comment +'</p>'+
                               '&nbsp; <a href="#" id="reply" onclick="comment_reply(event, '+ response.data.id +','+ response.data.thread_id +')" class="text-muted"><span class="fa fa-share"></span> Reply</a>';
                               if(response.data.count_reply_comment > 0) {
                                 reply_comment_text += '&nbsp; &nbsp;<a onclick="load_reply(event,'+ response.data.id+ ',' + response.data.thread_id +')" class="text-muted" href=""><span class="fa fa-comments-o"></span> '+ response.data.count_reply_comment +' comments</a>';
                               }
 
                               if(auth_check  && auth_id == response.data.user_id) {
-                                reply_comment_text += '&nbsp;&nbsp;<a href="#" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
+                                reply_comment_text += '&nbsp;&nbsp;<a href="#" onclick="edit_comment(event, '+ response.data.id +')" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
                                     '&nbsp;&nbsp;<a href="#" onclick="delete_comment(event, '+ response.data.id +')" class="text-muted"><i class="fa fa-trash"></i> Delete</a>';
                               }
 
-                          reply_comment_text += '</div></div>';
+                          reply_comment_text += '</div></div>'+
+
+                          '<div class="collapse" id="edit_comment_'+ response.data.id +'"></div>';
 
                         if(response.data.count_reply_comment > 0) {
                           reply_comment_text += '<div id="reply_'+ response.data.id +'"></div>';
@@ -459,13 +551,13 @@ input[type="file"]{
                                 '<a class="pull-left" href="#">'+
                                   '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
                                 '</a>'+
-                                '<div class="media-body">'+
+                                '<div class="media-body" id="comment_body_'+ response.data[i].id +'">'+
                                   '<div class="well well-lg">'+
                                       '<h4 class="media-heading reviews"><span class="fa fa-share"></span> '+response.data[i].user_info.name +' </h4>'+
                                       '<ul class="media-date text-uppercase reviews list-inline">'+
-                                        '<li class="dd">' + response.data[i].updated_at + '</li>'+
+                                        '<li class="dd" id="comment_date_'+ response.data[i].id +'">' + response.data[i].updated_at + '</li>'+
                                       '</ul>'+
-                                      '<p class="media-comment">'+ response.data[i].comment +'</p>'+
+                                      '<p class="media-comment" id="comment_content_'+ response.data[i].id +'">'+ response.data[i].comment +'</p>'+
                                       '&nbsp; <a href="#" id="reply" onclick="comment_reply(event, '+ response.data[i].id +','+ response.data[i].thread_id +')" class="text-muted"><span class="fa fa-share"></span> Reply</a>';
                                       if(response.data[i].count_reply_comment > 0) {
                                         reply_comment_text += '&nbsp; &nbsp;<a onclick="load_reply(event,'+ response.data[i].id+ ',' + response.data[i].thread_id +')" class="text-muted" href=""><span class="fa fa-comments-o"></span> '+ response.data[i].count_reply_comment +' comments</a>';
@@ -473,11 +565,12 @@ input[type="file"]{
 
                                       if(auth_check  && (auth_id == response.data[i].user_id)) {
                                         console.log('opp');
-                                        reply_comment_text += '&nbsp;&nbsp;<a href="#" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
+                                        reply_comment_text += '&nbsp;&nbsp;<a href="#" onclick="edit_comment(event, '+ response.data[i].id +')" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
                                             '&nbsp;&nbsp;<a href="#" onclick="delete_comment(event, '+ response.data[i].id +')" class="text-muted"><i class="fa fa-trash"></i> Delete</a>';
                                       }
 
-                                  reply_comment_text += '</div></div>';
+                                  reply_comment_text += '</div></div>'+
+                                    '<div class="collapse" id="edit_comment_'+ response.data[i].id +'"></div>';
 
                                 if(response.data[i].count_reply_comment > 0) {
                                   reply_comment_text += '<div id="reply_'+ response.data[i].id +'"></div>';
@@ -519,7 +612,6 @@ input[type="file"]{
       }
     }
 
-
     function comment_submit(thread_id) {
         var comment_text = $('#comment_text').val();
 
@@ -541,22 +633,23 @@ input[type="file"]{
                       '<a class="pull-left" href="#">'+
                         '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">'+
                       '</a>'+
-                      '<div class="media-body">'+
+                      '<div class="media-body" id="comment_body_'+ response.data.id +'">'+
                         '<div class="well well-lg">'+
                             '<h4 class="media-heading reviews">'+ response.data.user_info.name +' </h4>'+
                             '<ul class="media-date text-uppercase reviews list-inline">'+
-                              '<li class="dd">'+ response.data.updated_at +'</li>'+
+                              '<li class="dd" id="comment_date_'+ response.data.id +'">'+ response.data.updated_at +'</li>'+
                             '</ul>'+
-                            '<p class="media-comment">' + response.data.comment + '</p>'+
+                            '<p class="media-comment" id="comment_content_'+ response.data.id +'">' + response.data.comment + '</p>'+
                             '&nbsp; <a href="#" id="reply" onclick="comment_reply(event, '+ response.data.id +','+ response.data.thread_id +')" class="text-muted"><span class="fa fa-share"></span> Reply</a>';
 
                             if(auth_check  && auth_id == response.data.user_id) {
-                                comment_insert_text += '&nbsp;&nbsp;<a href="#" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
+                                comment_insert_text += '&nbsp;&nbsp;<a href="#" onclick="edit_comment(event, '+ response.data.id +')" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
                                     '&nbsp;&nbsp;<a href="#" onclick="delete_comment(event, '+ response.data.id +')" class="text-muted"><i class="fa fa-trash"></i> Delete</a>';
                               }
 
                         comment_insert_text += '</div>'+      
                       '</div>'+
+                      '<div class="collapse" id="edit_comment_'+ response.data.id +'"></div>'+
                       '<div id="comment_reply_'+ response.data.id +'"></div>'+
                     '</li>';
 

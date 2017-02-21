@@ -85,9 +85,19 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Comment $comment)
     {
-        //
+        $this->validate($request, [
+                'comment' => 'required',
+            ]);
+
+        if(Auth::id() != $comment->user_id) {
+            return response()->json(['error' => true, 'msg' => 'You are not able to edit this comment']);
+        }
+
+        $comment->update($request->all());
+
+        return response()->json(['error' => false, 'data' => $comment]);
     }
 
     /**
