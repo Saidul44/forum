@@ -127,7 +127,7 @@ input[type="file"]{
 
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-8 col-sm-8 col-lg-8">
             <div class="panel panel-default">
                 <div class="panel-heading">Threads</div>
 
@@ -251,6 +251,19 @@ input[type="file"]{
                     </div>
                   </div>
             </div>
+        </div>
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <ul class="list-group">
+                <li class="list-group-item active">Topics</li>
+                  @foreach($topics as $topic)
+                      <a href="{{ url('topic/'.$topic->id) }}">
+                        <li class="list-group-item">
+                          {{ $topic->name }}
+                            <span class="pull-right badge">{{ \App\Models\Thread\Thread::count_topics($topic->id) }}</span>
+                        </li>
+                      </a>
+                  @endforeach
+            </ul>
         </div>
     </div>
 </div>
