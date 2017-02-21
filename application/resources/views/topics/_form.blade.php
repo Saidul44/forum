@@ -2,7 +2,7 @@
       {!! Form::label('name', 'Name',['class'=>' col-lg-3 control-label']) !!}
     <div class="col-lg-8">
         {!! Form::text('name',null, ['id' => 'name', 'class' =>'form-control ', 'maxlength' => '250', 'required' => 'true']) !!}
-         <span class="text-danger">{{$errors->first('name')}}</span>
+         <span class="text-danger" id="name_error">{{$errors->first('name')}}</span>
     </div>
 </div>
 

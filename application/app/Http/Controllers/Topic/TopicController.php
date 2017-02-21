@@ -48,11 +48,14 @@ class TopicController extends Controller
                 'name' => 'required',
             ]);
 
-        $topic->create($request->all());
+        $topic = $topic->create($request->all());
 
-        Session::flash('success_msg', 'Successfully added a new topic');
-        return redirect('topic');
-
+        if($request->ajax()) {
+            return response()->json($topic);
+        } else {
+            Session::flash('success_msg', 'Successfully added a new topic');
+            return redirect('topic');
+        }
     }
 
     /**
