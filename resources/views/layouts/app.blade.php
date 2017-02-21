@@ -63,6 +63,13 @@
                             <li><a href="{{ url('threads') }}">Threads</a></li>
                         </ul>
                     @endif
+                    <!-- search box -->
+                    <form class="navbar-form navbar-left">
+                            <div class="form-group">
+                              <input type="text" class="form-control" placeholder="Search">
+                            </div>
+                            <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
