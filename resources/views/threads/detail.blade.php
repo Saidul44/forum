@@ -199,7 +199,7 @@ input[type="file"]{
 
                                     @foreach($comments as $comment_key => $comment)
                                       <?php $count_reply_comment = count_reply($comment->id, $comment->thread_id); ?>
-                                      <li class="media">
+                                      <li class="media" id="comment_li_{{ $comment->id }}">
                                         <a class="pull-left" href="#">
                                           <img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">
                                         </a>
@@ -245,6 +245,7 @@ input[type="file"]{
 
 <script>
     var login_url = "{{ url('login') }}";
+    var auth_id = '{{ Auth::id() }}';
 
     @if(Auth::check())
       var auth_check = 1;
@@ -271,6 +272,8 @@ input[type="file"]{
     });
 
     function delete_comment(e, comment_id) {
+      e.preventDefault();
+
       var url = '{{ url("comment") }}';
 
       $.ajax({
@@ -284,13 +287,32 @@ input[type="file"]{
           success: function (response) {
 
             if(! response.error) {
-              alert('a');
+              $('#comment_li_'+ comment_id).remove();
+                          
             } else {
-              alert('eeeee');
+              swal({
+                  title: "Warning",
+                  text: response.msg,
+                  type: "warning",
+                  confirmButtonText: "OK",
+              },
+              function (isConfirm) {
+                  location.reload();
+              });
             }
 
           },
-          error:{}
+          error: function (data) {
+            swal({
+                  title: "Warning",
+                  text: 'Something not right',
+                  type: "warning",
+                  confirmButtonText: "OK",
+              },
+              function (isConfirm) {
+                  location.reload();
+              });
+          }
       });  
     }
 
@@ -340,7 +362,7 @@ input[type="file"]{
 
             if(! response.error) {
               // var reply_comment_text = '<ul class="media-list" id="ul_reply_'+ comment_id +'">'+
-                    var reply_comment_text = '<li class="media media-replied">'+
+                    var reply_comment_text = '<li class="media media-replied" id="comment_li_'+ response.data.id +'">'+
                         '<a class="pull-left" href="#">'+
                           '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
                         '</a>'+
@@ -355,6 +377,12 @@ input[type="file"]{
                               if(response.data.count_reply_comment > 0) {
                                 reply_comment_text += '&nbsp; &nbsp;<a onclick="load_reply(event,'+ response.data.id+ ',' + response.data.thread_id +')" class="text-muted" href=""><span class="fa fa-comments-o"></span> '+ response.data.count_reply_comment +' comments</a>';
                               }
+
+                              if(auth_check  && auth_id == response.data.user_id) {
+                                reply_comment_text += '&nbsp;&nbsp;<a href="#" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
+                                    '&nbsp;&nbsp;<a href="#" onclick="delete_comment(event, '+ response.data.id +')" class="text-muted"><i class="fa fa-trash"></i> Delete</a>';
+                              }
+
                           reply_comment_text += '</div></div>';
 
                         if(response.data.count_reply_comment > 0) {
@@ -427,7 +455,7 @@ input[type="file"]{
                         var reply_comment_text = '<ul class="media-list" id="ul_reply_'+ comment_id +'">';
                             for(var i = 0; i < response.data.length; i++) {
 
-                            reply_comment_text += '<li class="media media-replied">'+
+                            reply_comment_text += '<li class="media media-replied" id="comment_li_'+ response.data[i].id +'">'+
                                 '<a class="pull-left" href="#">'+
                                   '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/ManikRathee/128.jpg" alt="profile">'+
                                 '</a>'+
@@ -442,6 +470,13 @@ input[type="file"]{
                                       if(response.data[i].count_reply_comment > 0) {
                                         reply_comment_text += '&nbsp; &nbsp;<a onclick="load_reply(event,'+ response.data[i].id+ ',' + response.data[i].thread_id +')" class="text-muted" href=""><span class="fa fa-comments-o"></span> '+ response.data[i].count_reply_comment +' comments</a>';
                                       }
+
+                                      if(auth_check  && (auth_id == response.data[i].user_id)) {
+                                        console.log('opp');
+                                        reply_comment_text += '&nbsp;&nbsp;<a href="#" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
+                                            '&nbsp;&nbsp;<a href="#" onclick="delete_comment(event, '+ response.data[i].id +')" class="text-muted"><i class="fa fa-trash"></i> Delete</a>';
+                                      }
+
                                   reply_comment_text += '</div></div>';
 
                                 if(response.data[i].count_reply_comment > 0) {
@@ -502,7 +537,7 @@ input[type="file"]{
                 success: function (response) {
 
                   if(! response.error) {
-                    var comment_insert_text = '<li class="media">'+
+                    var comment_insert_text = '<li class="media" id="comment_li_'+ response.data.id +'">'+
                       '<a class="pull-left" href="#">'+
                         '<img class="media-object img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg" alt="profile">'+
                       '</a>'+
@@ -513,8 +548,14 @@ input[type="file"]{
                               '<li class="dd">'+ response.data.updated_at +'</li>'+
                             '</ul>'+
                             '<p class="media-comment">' + response.data.comment + '</p>'+
-                            '&nbsp; <a href="#" id="reply" onclick="comment_reply(event, '+ response.data.id +','+ response.data.thread_id +')" class="text-muted"><span class="fa fa-share"></span> Reply</a>'+
-                        '</div>'+      
+                            '&nbsp; <a href="#" id="reply" onclick="comment_reply(event, '+ response.data.id +','+ response.data.thread_id +')" class="text-muted"><span class="fa fa-share"></span> Reply</a>';
+
+                            if(auth_check  && auth_id == response.data.user_id) {
+                                comment_insert_text += '&nbsp;&nbsp;<a href="#" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>'+
+                                    '&nbsp;&nbsp;<a href="#" onclick="delete_comment(event, '+ response.data.id +')" class="text-muted"><i class="fa fa-trash"></i> Delete</a>';
+                              }
+
+                        comment_insert_text += '</div>'+      
                       '</div>'+
                       '<div id="comment_reply_'+ response.data.id +'"></div>'+
                     '</li>';

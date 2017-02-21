@@ -99,6 +99,10 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         if($comment) {
+            if($comment->user_id != Auth::id()) {
+                return response()->json(['error' => true, 'msg' => 'You are not able to delete this comment']);
+            }
+
             Comment::where('comment_id', $comment->id)->delete();
             $comment->delete();
 
