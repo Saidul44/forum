@@ -45,6 +45,7 @@ class HomeController extends Controller
                         ->orWhere('body', 'like', '%' . $search . '%')
                         ->join('users', 'threads.user_id', '=', 'users.id')
                         ->orWhere('name', 'like', '%' . $search . '%')
+			->select('threads.*', 'users.name')
                         ->get();
 
         $title = 'Searched Results';
