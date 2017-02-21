@@ -17,24 +17,15 @@ a:hover{
 
 <div class="container">
     <div class="row">
-        <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    @if(isset($topic)) 
-                        {{ $topic->name }}
-                    @else
-                        Threads
-                    @endif
-                </div>
+        <div class="col-md-8 col-sm-8 col-lg-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {{ $title or '' }}
+                    </div>
 
-                <div class="panel-body">
-                    <div class="row">
-                    <div class="col-md-12">
-                               @foreach($threads as $key => $thread)
-                                    @if( $key % 2 == 0)
-                                        <div class="row">
-                                    @endif
-                                        <div class="col-md-6">
+                    <div class="panel-body">
+                         @foreach($threads as $key => $thread)
+                               <div class="col-md-6">
                                             <div>
                                                 <img style="height: 230px;" src="{{ asset('upload/'. $thread->photo) }}" class="img-responsive">
                                             </div>
@@ -58,31 +49,32 @@ a:hover{
                                                              {{ (count_comment($thread->id) > 0) ? count_comment($thread->id) : '' }} Comments</i></a>
                                                 </div>
                                             </div>
+                                </div>
+                                     @if($key % 2 == 1)
+                                      <div class="row">
+                                        <div class="col-md-12">
+                                         <hr>
+                                         </div>
                                         </div>
-                                    @if($key % 2 == 1)
-                                        </div>
-                                        <hr>
                                     @endif
-                                @endforeach
-                        </div>
-                        </div>
+                         @endforeach
+                    </div>
                 </div>
-            </div>
         </div>
-         <div class="col-md-4">
-                <ul class="list-group">
+        <div class="col-md-4 col-sm-4 col-lg-4">
+             <ul class="list-group">
                         <li class="list-group-item active">Topics</li>
                            @foreach($topics as $topic)
-                                   <li class="list-group-item">
                                         <a href="{{ url('topic/'.$topic->id) }}">
+                                <li class="list-group-item">
                                         {{ $topic->name }}
                                         <span class="pull-right badge">{{ \App\Models\Thread\Thread::count_topics($topic->id) }}</span>
+                                </li>
                                         </a>
-                                    </li>
                            @endforeach
                 </ul>
         </div>
-        
     </div>
+
 </div>
 @endsection
