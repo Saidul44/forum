@@ -96,9 +96,13 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-        //
+        if($comment) {
+            return response()->json(['error' => false, 'data']);
+        } else {
+            return response()->json(['error' => true, 'msg' => 'Comment not exists.']);
+        }
     }
 
     public function load_reply(Request $request) {

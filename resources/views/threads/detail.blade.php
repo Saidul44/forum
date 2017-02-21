@@ -128,7 +128,7 @@ input[type="file"]{
                         <img style="width: 717px;" src="{{ asset('upload/'. $thread->photo) }}" class="img-responsive">
                     </div>
                     <div class="about_details" style="color: black !important;">
-                        <h2>
+                        <h2 style="word-break: break-all;">
                             <a href="{{ url('thread-detail/'.$thread->id) }}">{{ $thread->title }}</a>
                             <span class="pull-right" style="font-size: 14px; padding-top: 10px;">
                             @if(Auth::check() && (Auth::id() == $thread->user_id))
@@ -187,7 +187,7 @@ input[type="file"]{
                                             <form class="">
                                               <div class="form-group">
                                                 <div class="input-group">
-                                                  <input type="text" class="form-control" id="comment_text" placeholder="Write a comment">
+                                                  <input type="text" class="form-control input_key" id="comment_text" placeholder="Write a comment">
                                                   <div class="btn-primary input-group-addon" style="cursor: pointer" onclick="comment_submit('{{ $thread->id }}')">Submit</div>
                                                 </div>
                                               </div>
@@ -216,6 +216,10 @@ input[type="file"]{
                                               @if( $count_reply_comment > 0)
                                                 &nbsp; &nbsp;<a onclick="load_reply(event, '{{ $comment->id }}','{{ $comment->thread_id }}')" class="text-muted" href="#"><span class="fa fa-comments-o"></span> {{ $count_reply_comment }} comments</a>
                                               @endif
+                                              @if(Auth::check() && (Auth::id() == $comment->user_id))
+                                                &nbsp;&nbsp;<a href="#" class="text-muted"><i class="fa fa-pencil"></i> Edit</a>
+                                                &nbsp;&nbsp;<a href="#" onclick="delete_comment(event, '{{ $comment->id }}')" class="text-muted"><i class="fa fa-trash"></i> Delete</a>
+                                              @endif
                                           </div>              
                                         </div>
                                         @if($count_reply_comment > 0)
@@ -240,18 +244,55 @@ input[type="file"]{
 </div>
 
 <script>
+    var login_url = "{{ url('login') }}";
+
     @if(Auth::check())
       var auth_check = 1;
     @else
       var auth_check = 0;
     @endif
 
-    $('input').keyup(function() {
+    $(document).on('keyup', "input[type='text']",function () {
       if(! auth_check) {
         $(this).val('');
-        alert('login first');
+        swal({
+            title: "Warning!",
+            text: 'You must have to login first to comment ot reply',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: 'Login',
+            closeOnConfirm: false
+        },
+        function(){
+            window.location.href = login_url;
+        });
       }
     });
+
+    function delete_comment(e, comment_id) {
+      var url = '{{ url("comment") }}';
+
+      $.ajax({
+          url: url+'/'+comment_id,
+          method: 'post',
+          dataType: 'json',
+          data: {
+              _token: "{{ csrf_token() }}",
+              _method: 'DELETE'
+          },
+          success: function (response) {
+
+            if(! response.error) {
+
+            } else {
+
+            }
+
+          },
+          error:{}
+      });  
+    }
 
     function comment_reply(e, comment_id, thread_id) {
       e.preventDefault();
@@ -263,7 +304,7 @@ input[type="file"]{
       var comment_reply_input = '<form class="">'+
         '<div class="form-group">'+
           '<div class="input-group">'+
-            '<input type="text" class="form-control" id="comment_text_'+ comment_id +'" placeholder="Write a comment">'+
+            '<input type="text" class="form-control input_key" id="comment_text_'+ comment_id +'" placeholder="Write a comment">'+
             '<div class="btn-primary input-group-addon" style="cursor: pointer" onclick="reply_submit('+ comment_id +','+ thread_id +')">Submit</div>'+
           '</div>'+
         '</div>'+

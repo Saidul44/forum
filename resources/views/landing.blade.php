@@ -33,7 +33,7 @@ a:hover{
                                                 <img style="height: 230px;" src="{{ asset('upload/'. $thread->photo) }}" class="img-responsive">
                                             </div>
                                             <div class="about_details" style="color: black !important;">
-                                                <h2>
+                                                <h2 style="word-break: break-all;">
                                                     <a href="{{ url('thread-detail/'.$thread->id) }}">{{ $thread->title }}</a>
                                                 </h2>
                                                 @if(Auth::check() && (Auth::id() == $thread->user_id))
