@@ -17,7 +17,7 @@
 <div class="form-group required">
       {!! Form::label('body', null,['class'=>' col-lg-3 control-label']) !!}
     <div class="col-lg-8">
-        {!! Form::textarea('body',null, ['id' => 'body', 'class' =>'form-control ', 'maxlength' => '250', 'required' => 'true', 'rows' => 5]) !!}
+        {!! Form::textarea('body',null, ['id' => 'body', 'class' =>'form-control ', 'required' => 'true', 'rows' => 5]) !!}
          <span class="text-danger">{{$errors->first('body')}}</span>
     </div>
 </div>

@@ -12,6 +12,11 @@ use Auth;
 
 class ThreadController extends Controller
 {
+
+    public function __construct() {
+        $this->middleware('auth', ['except' => 'thread_detail']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -118,7 +123,7 @@ class ThreadController extends Controller
                 'topic' => 'required',
                 'title' => 'required',
                 'body' => 'required',
-                'image' => 'required|image'
+                'image' => 'image'
             ]);
 
         $topic = Topic::find($request->topic);
@@ -155,6 +160,8 @@ class ThreadController extends Controller
     {
         if($thread) {
             if($thread->user_id == Auth::id()) {
+                Comment::where('thread_id', $thread->id)->delete();
+
                 $thread->delete();
                 Session::flash('success_msg', 'Successfully deleted a thread.');
             } else {

@@ -36,11 +36,20 @@ a:hover{
                                                 <h2>
                                                     <a href="{{ url('thread-detail/'.$thread->id) }}">{{ $thread->title }}</a>
                                                 </h2>
+                                                @if(Auth::check() && (Auth::id() == $thread->user_id))
+                                                    <div>
+                                                        {!! Form::open(['method' => 'DELETE', 'route' => ['threads.destroy', $thread->id], 'class' => 'delete-form', 'id' => "thread_delete_$thread->id"]) !!}
+                                                            <a class="text-primary" href="{{ url('threads/'.$thread->id.'/edit') }}"><i class="fa fa-pencil"></i> Edit</a>
+
+                                                            &nbsp; &nbsp;&nbsp;<span style="cursor: pointer;" class="text-danger delete-swl"><i class="fa fa-trash"></i> Delete</span>
+                                                        {!! Form::close() !!}
+                                                    </div>
+                                                @endif
                                                 <div class="icon">
                                                     <a href="{{ url('') }}"><i class="fa fa-user" aria-hidden="true">
                                                             {{ user_info($thread->user_id, 'name') }}
-                                                        </i></a> &nbsp; <a href="#"><i class="fa fa-clock-o" aria-hidden="true">{{ $thread->updated_at }}</i></a> &nbsp; <a href="{{ url('thread-detail/'.$thread->id) }}"><i class="fa fa-comments-o" aria-hidden="true">
-                                                            Comments</i></a>
+                                                        </i></a> &nbsp; <a href="#"><i class="fa fa-clock-o" aria-hidden="true"> {{ $thread->updated_at }}</i></a> &nbsp; <a href="{{ url('thread-detail/'.$thread->id) }}"><i class="fa fa-comments-o" aria-hidden="true">
+                                                             {{ (count_comment($thread->id) > 0) ? count_comment($thread->id) : '' }} Comments</i></a>
                                                 </div>
                                             </div>
                                         </div>

@@ -130,7 +130,19 @@ input[type="file"]{
                     <div class="about_details" style="color: black !important;">
                         <h2>
                             <a href="{{ url('thread-detail/'.$thread->id) }}">{{ $thread->title }}</a>
+                            <span class="pull-right" style="font-size: 14px; padding-top: 10px;">
+                            @if(Auth::check() && (Auth::id() == $thread->user_id))
+                                <div>
+                                    {!! Form::open(['method' => 'DELETE', 'route' => ['threads.destroy', $thread->id], 'class' => 'delete-form', 'id' => "thread_delete_$thread->id"]) !!}
+                                        <a class="text-primary" href="{{ url('threads/'.$thread->id.'/edit') }}"><i class="fa fa-pencil"></i> Edit</a>
+
+                                        &nbsp; &nbsp;&nbsp;<span style="cursor: pointer;" class="text-danger delete-swl"><i class="fa fa-trash"></i> Delete</span>
+                                    {!! Form::close() !!}
+                                </div>
+                            @endif
+                          </span>
                         </h2>
+
                         <p>{{ $thread->body }}</p>
                         <hr style="margin-top: 5px !important; margin-bottom: 5px !important;">
                         <div class="icon">
@@ -140,18 +152,33 @@ input[type="file"]{
                         </div>
                     </div>
 
-                    <div class="col-sm-12 collapse" id="comments_div">
+                    <div class="col-sm-12 collapse in" id="comments_div">
                         <div class="page-header">
                             <div class="logout">
-                                <button class="btn btn-default btn-circle text-uppercase" type="button" onclick="$('#logout').hide(); $('#login').show()">
-                                    <span class="fa fa-power-off"></span> Logout                    
-                                </button>                
+                                    @if(Auth::check())
+                                        <a class="btn btn-danger btn-circle" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                            <span class="fa fa-power-off"></span> Logout
+                                        </a>
+                                  
+
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                            {{ csrf_field() }}
+                                        </form>               
+                                    @else
+                                      <a href="{{ url('login') }}" class="btn btn-success btn-circle" type="button" onclick="">
+                                        <span class="fa fa-sign-in"></span> Login                    
+                                      </a>  
+                                    @endif
                             </div>
                         </div>
                         <div class="comment-tabs">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="active"><a class="nav-li" href="#comments-logout" role="tab" data-toggle="tab"><h4 class="reviews text-capitalize">Comments</h4></a></li>
-                                <!-- <li><a href="#add-comment" role="tab" data-toggle="tab"><h4 class="reviews text-capitalize">Add comment</h4></a></li> -->
+                                @if(! Auth::check())
+                                  <li><a class="nav-li" href="{{ url('register') }}"><h4 class="reviews text-capitalize" style="color: #3097d1 !important;">Registration</h4></a></li>
+                                @endif
                             </ul>            
                             <div class="tab-content tab-content-custom">
                                 <div class="tab-pane active" id="comments-logout">                
@@ -213,7 +240,19 @@ input[type="file"]{
 </div>
 
 <script>
-    
+    @if(Auth::check())
+      var auth_check = 1;
+    @else
+      var auth_check = 0;
+    @endif
+
+    $('input').keyup(function() {
+      if(! auth_check) {
+        $(this).val('');
+        alert('login first');
+      }
+    });
+
     function comment_reply(e, comment_id, thread_id) {
       e.preventDefault();
       

@@ -57,17 +57,19 @@
 
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
-                    <ul class="nav navbar-nav">
-                        <li><a href="{{ url('topic') }}">Topic</a></li>
-                        <li><a href="{{ url('threads') }}">Threads</a></li>
-                    </ul>
+                    @if(Auth::check())
+                        <ul class="nav navbar-nav">
+                            <li><a href="{{ url('topic') }}">Topic</a></li>
+                            <li><a href="{{ url('threads') }}">Threads</a></li>
+                        </ul>
+                    @endif
 
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
                         @if (Auth::guest())
                             <li><a href="{{ route('login') }}">Login</a></li>
-                            <li><a href="{{ route('register') }}">Register</a></li>
+                            <li><a href="{{ route('register') }}">Registration</a></li>
                         @else
                             
                            

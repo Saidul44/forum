@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Auth;
+use URL;
 use App\User;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -67,5 +71,35 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function showRegistrationForm()
+    {
+        $previous_url = URL::previous();
+        return view('auth.register', get_defined_vars());
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        $previous_url = $request->previous_url;
+            
+        if($previous_url != url('') && $previous_url != url('login') && $previous_url != url('register')) {
+            return redirect($previous_url);
+        } else {
+            return $this->registered($request, $user)
+                        ?: redirect($this->redirectPath());
+        }
     }
 }
