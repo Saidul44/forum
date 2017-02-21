@@ -22,3 +22,4 @@ Route::resource('threads', 'Thread\ThreadController');
 Route::post('reply_store', 'Comment\CommentController@reply_store');
 Route::post('load_reply', 'Comment\CommentController@load_reply');
 Route::resource('comment', 'Comment\CommentController');
+Route::get('search', 'HomeController@search');
