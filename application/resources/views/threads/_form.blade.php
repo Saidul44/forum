@@ -5,7 +5,7 @@
          <span class="text-danger">{{$errors->first('topic')}}</span>
     </div>
     <div>
-      <a class="btn btn-primary" href="{{ url('topic') }}"><i class="fa fa-plus"></i></a>
+      <a class="btn btn-primary" onclick="add_topic(event)"><i class="fa fa-plus"></i></a>
     </div>
 </div>
 
