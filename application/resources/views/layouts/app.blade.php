@@ -66,7 +66,7 @@
                     <!-- search box -->
                     <form class="navbar-form navbar-left" action="{{ url('search') }}" method="get">
                             <div class="form-group">
-                              <input type="text" class="form-control" value="{{ isset($search) ? $search : '' }}" required="" name="value" placeholder="Search">
+                              <input type="text" class="form-control" value="{{ isset($search) ? $search : '' }}" required="" id="search_input" name="value" placeholder="Search">
                             </div>
                             <button type="submit" class="btn btn-default">Submit</button>
                     </form>

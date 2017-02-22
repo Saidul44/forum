@@ -280,20 +280,23 @@ input[type="file"]{
     @endif
 
     $(document).on('keyup', "input[type='text']",function () {
-      if(! auth_check) {
-        $(this).val('');
-        swal({
-            title: "Warning!",
-            text: 'You must have to login first to comment ot reply',
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: 'Login',
-            closeOnConfirm: false
-        },
-        function(){
-            window.location.href = login_url;
-        });
+      var input_id = $(this).prop('id');
+      if(input_id != 'search_input') {
+        if(! auth_check) {
+          $(this).val('');
+          swal({
+              title: "Warning!",
+              text: 'You must have to login first to comment ot reply',
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: 'Login',
+              closeOnConfirm: false
+          },
+          function(){
+              window.location.href = login_url;
+          });
+        }
       }
     });
 
